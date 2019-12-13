@@ -8,4 +8,159 @@
     <artifactId>dogether-done-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
+
+    <modules>
+        <module>iam</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+        <kotlin.version>1.3.41</kotlin.version>
+        <vertx.version>3.8.0</vertx.version>
+        <junit-jupiter.version>5.4.0</junit-jupiter.version>
+        <axonframework.version>4.1.2</axonframework.version>
+        <postgresql.version>42.2.6</postgresql.version>
+        <jooq.version>3.11.9</jooq.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- inventage iam/keycloak -->
+            <dependency>
+                <groupId>com.inventage.keycloak.iam</groupId>
+                <artifactId>iam-server-keycloak</artifactId>
+                <version>2.0.0-201912120917-3-7bb2dc8</version>
+                <classifier>all</classifier>
+                <type>tar</type>
+            </dependency>
+            <!-- vertx stack -->
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-stack-depchain</artifactId>
+                <version>${vertx.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- CQRS framework -->
+            <dependency>
+                <groupId>org.axonframework</groupId>
+                <artifactId>axon-messaging</artifactId>
+                <version>${axonframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.axonframework</groupId>
+                <artifactId>axon-modelling</artifactId>
+                <version>${axonframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.axonframework</groupId>
+                <artifactId>axon-eventsourcing</artifactId>
+                <version>${axonframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.axonframework</groupId>
+                <artifactId>axon-configuration</artifactId>
+                <version>${axonframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.axonframework</groupId>
+                <artifactId>axon-test</artifactId>
+                <version>4.1.1</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- Logging Slf4j-->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.25</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.2.3</version>
+                <scope>runtime</scope>
+            </dependency>
+            <!-- jooq -->
+            <dependency>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq</artifactId>
+                <version>${jooq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-meta</artifactId>
+                <version>${jooq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen</artifactId>
+                <version>${jooq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.9.9.3</version>
+            </dependency>
+            <!-- liquibase for db schema mgmt -->
+            <dependency>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>3.5.5</version>
+            </dependency>
+            <!-- postgres JDBC driver -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+            </dependency>
+            <!-- testing -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit-jupiter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit-jupiter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>1.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-surefire-provider</artifactId>
+                <version>1.2.0</version>
+            </dependency>
+            <!-- Kotlin -->
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk8</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-test</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <!-- code first for graphql schema generation -->
+            <dependency>
+                <groupId>com.expedia</groupId>
+                <artifactId>graphql-kotlin-schema-generator</artifactId>
+                <version>1.0.0-RC4</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 </project>
