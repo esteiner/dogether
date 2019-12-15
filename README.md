@@ -1,5 +1,17 @@
 # dogether
 
+## Google Cloud Platform
+
+Aktivierte APIs:
+
+- Kubernetes API
+- Container Registry API
+- Cloud Run
+
+### Cloud Provisiong mit Terraform
+
+Für die Terraform Automatisierung wird ein Service Account benötigt, welche die *Project Editor* Rolle besitzt.
+
 ## Resources
 - [Google Cloud](https://console.cloud.google.com/home/dashboard?project=dogether-261922&folder=)
 

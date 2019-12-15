@@ -21,10 +21,10 @@
 
 <!--        <docker.pull.registry>docker-registry.inventage.com:10026/</docker.pull.registry> &lt;!&ndash; projectware group &ndash;&gt;-->
         <docker.pull.registry></docker.pull.registry> <!-- projectware group -->
-        <docker.push.registry>docker-registry.inventage.com:10078</docker.push.registry> <!-- staging -->
+        <docker.push.registry>gcr.io/dogether-261922/</docker.push.registry> <!-- staging -->
         <jboss.base.image>jboss/base-jdk:8</jboss.base.image>
         <image.name>${project.groupId}.${project.artifactId}</image.name>
-        <image.global.name>${docker.push.registry}/${image.name}</image.global.name>
+        <image.global.name>${docker.push.registry}${image.name}</image.global.name>
 
         <kotlin.version>1.3.41</kotlin.version>
         <vertx.version>3.8.0</vertx.version>

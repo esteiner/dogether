@@ -6,7 +6,6 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -15,7 +14,44 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+#    - name: Release Candidate Version
+#      run
+#    - name: Versiontiger
+#      run: java -jar .github/lib/com.inventage.tools.versiontiger-1.4.1-SNAPSHOT-cli.jar ci.versiontiger
     - name: Build with Maven
       env: # Or as an environment variable
         MAVEN_REPO_INVENTAGE_TOKEN: ${{ secrets.MAVEN_REPO_INVENTAGE_TOKEN }}
       run: mvn -B install -s .m2/settings.xml --file pom.xml
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      # Setup gcloud CLI
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '270.0.0'
+          service_account_email: ${{ secrets.GKE_EMAIL }}
+          service_account_key: ${{ secrets.GKE_KEY }}
+      # Configure docker to use the gcloud command-line tool as a credential helper
+      - run: |
+          # Set up docker to authenticate
+          # via gcloud command-line tool.
+          gcloud auth configure-docker
+      # Push the Docker image to Google Container Registry
+      - name: Publish
+        run: |
+          docker push gcr.io/dogether-261922/ch.dogether-done.iam-server:latest
+#      # Set up kustomize
+#      - name: Set up Kustomize
+#        run: |
+#          curl -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+#          chmod u+x ./kustomize
+#      # Deploy the Docker image to the GKE cluster
+#      - name: Deploy
+#        run: |
+#          gcloud container clusters get-credentials $GKE_CLUSTER --zone $GKE_ZONE --project $GKE_PROJECT
+#          ./kustomize edit set image gcr.io/$GKE_PROJECT/$IMAGE:${GITHUB_SHA}
+#          ./kustomize build . | kubectl apply -f -
+#          kubectl rollout status deployment/gke-test
+#          kubectl get services -o wide
