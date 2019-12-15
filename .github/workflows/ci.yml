@@ -32,7 +32,7 @@ jobs:
     - run: |
         # Set up docker to authenticate
         # via gcloud command-line tool.
-        gcloud auth configure-docker
+        gcloud auth activate-service-account --key-file={{ secrets.GKE_GITHUB }}
     # Push the Docker image to Google Container Registry
     - name: push
       run: |
