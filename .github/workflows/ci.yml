@@ -27,12 +27,12 @@ jobs:
       with:
         version: '270.0.0'
         service_account_email: ${{ secrets.GKE_GITHUB_EMAIL }}
-        service_account_key: ${{ secrets.GKE_GITHUB_KEY }}
+        service_account_key: ${{ secrets.GKE_GITHUB }}
     # Configure docker to use the gcloud command-line tool as a credential helper
     - run: |
         # Set up docker to authenticate
         # via gcloud command-line tool.
-        gcloud auth activate-service-account --key-file={{ secrets.GKE_GITHUB }}
+        gcloud auth configure-docker
     # Push the Docker image to Google Container Registry
     - name: push
       run: |
