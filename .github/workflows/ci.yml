@@ -18,4 +18,4 @@ jobs:
     - name: Build with Maven
       env: # Or as an environment variable
         MAVEN_REPO_INVENTAGE_TOKEN: ${{ secrets.MAVEN_REPO_INVENTAGE_TOKEN }}
-      run: mvn -B package -s .m2/settings.xml --file pom.xml
+      run: mvn -B install -s .m2/settings.xml --file pom.xml
