@@ -22,26 +22,21 @@ jobs:
       env: # Or as an environment variable
         MAVEN_REPO_INVENTAGE_TOKEN: ${{ secrets.MAVEN_REPO_INVENTAGE_TOKEN }}
       run: mvn -B install -s .m2/settings.xml --file pom.xml
-
-  publish:
-    name: Publish
-    runs-on: ubuntu-latest
-    steps:
-      # Setup gcloud CLI
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-        with:
-          version: '270.0.0'
-          service_account_email: ${{ secrets.GKE_EMAIL }}
-          service_account_key: ${{ secrets.GKE_KEY }}
-      # Configure docker to use the gcloud command-line tool as a credential helper
-      - run: |
-          # Set up docker to authenticate
-          # via gcloud command-line tool.
-          gcloud auth configure-docker
-      # Push the Docker image to Google Container Registry
-      - name: Publish
-        run: |
-          docker push gcr.io/dogether-261922/ch.dogether-done.iam-server:latest
+    # Setup gcloud CLI
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.GKE_GITHUB_EMAIL }}
+        service_account_key: ${{ secrets.GKE_GiTHUB_KEY }}
+    # Configure docker to use the gcloud command-line tool as a credential helper
+    - run: |
+        # Set up docker to authenticate
+        # via gcloud command-line tool.
+        gcloud auth configure-docker
+    # Push the Docker image to Google Container Registry
+    - name: push
+      run: |
+        docker push gcr.io/dogether-261922/ch.dogether-done.iam-server:latest
 #      # Set up kustomize
 #      - name: Set up Kustomize
 #        run: |
