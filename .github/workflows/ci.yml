@@ -22,11 +22,10 @@ jobs:
       env: # Or as an environment variable
         MAVEN_REPO_INVENTAGE_TOKEN: ${{ secrets.MAVEN_REPO_INVENTAGE_TOKEN }}
       run: mvn -B install -s .m2/settings.xml --file pom.xml
-    # Setup gcloud CLI
+    # Setup gcloud CLI (https://github.com/GoogleCloudPlatform/github-actions/tree/master/setup-gcloud#inputs)
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
       with:
         version: '270.0.0'
-        service_account_email: ${{ secrets.GKE_GITHUB_EMAIL }}
         service_account_key: ${{ secrets.GKE_GITHUB }}
     # Configure docker to use the gcloud command-line tool as a credential helper
     - run: |
