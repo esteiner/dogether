@@ -14,6 +14,7 @@
 
     <properties>
         <keycloak.dir>${project.build.directory}/wildfly</keycloak.dir>
+        <image.name>${project.groupId}.iam-server</image.name>
     </properties>
 
     <dependencies>
@@ -22,11 +23,54 @@
             <artifactId>iam-server-keycloak</artifactId>
             <classifier>all</classifier>
             <type>tar</type>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- for substituting variables in resource files -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-wildfly-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${keycloak.dir}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/wildfly</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                            <nonFilteredFileExtensions>
+                                <nonFilteredFileExtension>jks</nonFilteredFileExtension>
+                            </nonFilteredFileExtensions>
+                        </configuration>
+                    </execution>
+                    <!-- Dockerfile -->
+                    <execution>
+                        <id>copy-docker-files</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/docker</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/docker</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -45,37 +89,12 @@
                     <!-- for copying iam-themes to themes folder of keycloak -->
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <!-- for substituting variables in resource files -->
-                    <execution>
-                        <id>copy-wildfly-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${keycloak.dir}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                            <nonFilteredFileExtensions>
-                                <nonFilteredFileExtension>jks</nonFilteredFileExtension>
-                            </nonFilteredFileExtensions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- for building fat jars -->
+            <!-- build fat jar -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>jars</id>
+                        <id>all</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -84,10 +103,20 @@
                             <descriptors>
                                 <descriptor>assembly-all.xml</descriptor>
                             </descriptors>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <!-- remove entry longer than 100 characters warnings -->
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                            <outputDirectory>${project.build.directory}/docker/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- build Docker Images -->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <configuration>
+                    <contextDirectory>${project.build.directory}/docker</contextDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>

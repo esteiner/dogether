@@ -1,3 +1,5 @@
+# https://help.github.com/en/actions/automating-your-workflow-with-github-actions/core-concepts-for-github-actions#continuous-deployment-cd
+
 name: CI
 
 on: [push]

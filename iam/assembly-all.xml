@@ -9,7 +9,7 @@
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}/wildfly</directory> <!-- content -->
-            <outputDirectory>${project.build.directory}</outputDirectory> <!-- content is added to the root directory -->
+            <outputDirectory></outputDirectory> <!-- content is added to the root directory -->
         </fileSet>
     </fileSets>
 </assembly>

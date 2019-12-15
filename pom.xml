@@ -19,6 +19,13 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
+<!--        <docker.pull.registry>docker-registry.inventage.com:10026/</docker.pull.registry> &lt;!&ndash; projectware group &ndash;&gt;-->
+        <docker.pull.registry></docker.pull.registry> <!-- projectware group -->
+        <docker.push.registry>docker-registry.inventage.com:10078</docker.push.registry> <!-- staging -->
+        <jboss.base.image>jboss/base-jdk:8</jboss.base.image>
+        <image.name>${project.groupId}.${project.artifactId}</image.name>
+        <image.global.name>${docker.push.registry}/${image.name}</image.global.name>
+
         <kotlin.version>1.3.41</kotlin.version>
         <vertx.version>3.8.0</vertx.version>
         <junit-jupiter.version>5.4.0</junit-jupiter.version>
@@ -204,17 +211,80 @@
                     <artifactId>spotbugs-maven-plugin</artifactId>
                     <version>3.1.12.2</version>
                 </plugin>
+                <!-- for building Docker Images -->
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>dockerfile-maven-plugin</artifactId>
+                    <version>1.4.10</version>
+                    <configuration>
+                        <contextDirectory>${project.build.directory}/docker</contextDirectory>
+                        <repository>${image.name}</repository>
+                        <pullNewerImage>false</pullNewerImage>
+                        <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+                        <skipDockerInfo>true</skipDockerInfo>
+                    </configuration>
+                    <executions>
+                        <!-- build image -->
+                        <execution>
+                            <id>build-image</id>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>build</goal>
+                            </goals>
+                        </execution>
+                        <!-- tag image with version -->
+                        <execution>
+                            <id>tag-image-versioned</id>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>tag</goal>
+                            </goals>
+                            <configuration>
+                                <repository>${image.global.name}</repository>
+                                <tag>${project.version}</tag>
+                            </configuration>
+                        </execution>
+                        <!-- tag image with latest-->
+                        <execution>
+                            <id>tag-image-latest</id>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>tag</goal>
+                            </goals>
+                            <configuration>
+                                <repository>${image.global.name}</repository>
+                                <tag>latest</tag>
+                            </configuration>
+                        </execution>
+                        <!-- push image latest -->
+                        <execution>
+                            <id>push-image-latest</id>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>push</goal>
+                            </goals>
+                            <configuration>
+                                <repository>${image.global.name}</repository>
+                                <tag>latest</tag>
+                            </configuration>
+                        </execution>
+                        <!-- push image versioned -->
+                        <execution>
+                            <id>push-image-versioned</id>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>push</goal>
+                            </goals>
+                            <configuration>
+                                <repository>${image.global.name}</repository>
+                                <tag>${project.version}</tag>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
-            <!-- for building fat jars -->
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <!-- remove entry longer than 100 characters warnings -->
-                    <tarLongFileMode>gnu</tarLongFileMode>
-                </configuration>
-            </plugin>
             <!-- Fail when maven dependency warnings are present-->
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -228,6 +298,7 @@
                             <failOnWarning>true</failOnWarning>
                             <!-- ignore annotations for "unused but declared" warnings -->
                             <ignoredUnusedDeclaredDependencies>
+                                <ignoredUnusedDeclaredDependency>com.inventage.keycloak.iam:iam-server-keycloak</ignoredUnusedDeclaredDependency>
                                 <ignoredUnusedDeclaredDependency>org.slf4j:slf4j-api</ignoredUnusedDeclaredDependency>
                                 <ignoredUnusedDeclaredDependency>ch.qos.logback:logback-classic</ignoredUnusedDeclaredDependency>
                             </ignoredUnusedDeclaredDependencies>
@@ -257,18 +328,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- aka findbugs -->
-            <plugin>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-maven-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.github.spotbugs</groupId>
-                        <artifactId>spotbugs</artifactId>
-                        <version>4.0.0-beta4</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
             <!-- Fail build when checkstyle warnings are present-->
             <plugin>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -286,6 +345,18 @@
                     <failOnViolation>true</failOnViolation>
                     <violationSeverity>warning</violationSeverity>
                 </configuration>
+            </plugin>
+            <!-- aka findbugs -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs</artifactId>
+                        <version>4.0.0-beta4</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
