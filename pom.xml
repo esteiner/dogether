@@ -30,7 +30,7 @@
         <vertx.version>3.8.0</vertx.version>
         <junit-jupiter.version>5.4.0</junit-jupiter.version>
         <axonframework.version>4.1.2</axonframework.version>
-        <postgresql.version>42.2.6</postgresql.version>
+        <postgresql.version>42.2.25</postgresql.version>
         <jooq.version>3.11.9</jooq.version>
     </properties>
 
